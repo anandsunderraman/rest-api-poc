@@ -1,0 +1,71 @@
+#%RAML 0.8
+
+title: Compass -- REST services for compass services
+version: v1
+baseUri: https://cc.rest.api/{version}/
+
+schemas:
+  - fibonacci:   !include fibonacci.json
+  - error:       !include error.json
+  - posts:       !include posts.json
+  - user:        !include user.json
+
+/helloWorld:
+  get:
+    description: returns hello world string
+    responses:
+      200:
+        body:
+          text/plain:
+
+/fibonacci/{number}:
+  uriParameters:
+    number:
+      type: integer
+  get:
+    description: returns the first N numbers of a Fibonacci series specified by number
+    responses:
+      200:
+        body:
+          application/json:
+            schema: fibonacci
+      400:
+        body:
+          application/json:
+            schema: error
+
+/external/posts:
+  get:
+    description: returns response from an external Posts service
+    responses:
+      200:
+        body:
+          application/json:
+            schema: posts
+      500:
+        body:
+          application/json:
+            schema: error
+
+/user:
+  post:
+    description: creates a new user
+    body:
+      application/json:
+        schema: user
+  /{id}:
+    uriParameters:
+      id:
+        type: integer
+    get:
+      description: returns response from an external Posts service
+      responses:
+        200:
+          body:
+            application/json:
+              schema: user
+        404:
+          body:
+            application/json:
+              schema: error
+

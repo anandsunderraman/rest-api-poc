@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "error",
+  "type": "object",
+  "description": "Generic error message",
+  "properties": {
+    "errorType": {
+      "enum": [
+        "badrequest",
+        "servererror"
+      ]
+    },
+    "message": {
+      "type": "string"
+    }
+  }
+}

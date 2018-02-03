@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "posts",
+  "type": "array",
+  "description": "Response for external service that returns posts",
+  "items": {
+    "type": "object",
+    "properties": {
+      "userId": {
+        "type": "string"
+      },
+      "id": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "string"
+      },
+      "body": {
+        "type": "string"
+      }
+    }
+  }
+}
