@@ -7,6 +7,8 @@ import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class UserResourceImpl implements UserResource {
 
@@ -28,11 +30,17 @@ public class UserResourceImpl implements UserResource {
             return GetUserByIdResponse.withJsonNotFound(error);
         }
 
-        org.example.domain.User user = userService.getUserById(new Long(id));
+        Optional<org.example.domain.User> domainUser = userService.getUserById(new Long(id));
 
-        return GetUserByIdResponse.withJsonOK(from(user));
-
-
+        if (domainUser.isPresent()) {
+            return GetUserByIdResponse.withJsonOK(from(domainUser.get()));
+        } else {
+            String errorMessage = String.format("Unable to find with user with id: %d", id);
+            Error error = new Error()
+                    .withMessage(errorMessage)
+                    .withErrorType(Error.ErrorType.BADREQUEST);
+            return GetUserByIdResponse.withJsonNotFound(error);
+        }
     }
 
     /**
@@ -41,12 +49,27 @@ public class UserResourceImpl implements UserResource {
      * @return
      */
     private User from(org.example.domain.User domainUser) {
-        User resultUser =  new User();
-        resultUser.setAge(domainUser.getAge());
-        resultUser.setId(domainUser.getId());
-        resultUser.setName(domainUser.getName());
-        return resultUser;
+        User restResponseUser =  new User();
+        restResponseUser.setAge(domainUser.getAge());
+        restResponseUser.setId(domainUser.getId());
+        restResponseUser.setName(domainUser.getName());
+        return restResponseUser;
     }
 
+    @Override
+    public PostUserResponse postUser(User userPayload) throws Exception {
+        //convert the user entity to domain user object
+        org.example.domain.User domainUser = new org.example.domain.User(userPayload);
 
+        //save the user via the service
+        org.example.domain.User savedUser = userService.save(domainUser);
+
+        //return the saved user as the response
+        return PostUserResponse.withJsonOK(savedUser.convertToRestResponse());
+    }
+
+    @Override
+    public PutUserByIdResponse putUserById(Integer id, User entity) throws Exception {
+        return null;
+    }
 }

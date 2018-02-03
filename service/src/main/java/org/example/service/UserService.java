@@ -6,6 +6,8 @@ import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class UserService {
 
@@ -16,7 +18,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<User> getUserById(Long id) {
+        return Optional.ofNullable(userRepository.findById(id));
+    }
+
+    public User save(User user) {
+        //since we are creating a user object
+        //if an id was set on the user object we set it to null
+        user.setId(null);
+        return userRepository.save(user);
     }
 }

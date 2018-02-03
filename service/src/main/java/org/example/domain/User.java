@@ -28,6 +28,27 @@ public class User {
         return age;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User() {
+    }
+
+    public User(cc.api.model.v1.model.User restResponseUser) {
+        id = restResponseUser.getId();
+        name = restResponseUser.getName();
+        age = restResponseUser.getAge();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -56,5 +77,13 @@ public class User {
         sb.append(", age=").append(age);
         sb.append('}');
         return sb.toString();
+    }
+
+    public cc.api.model.v1.model.User convertToRestResponse() {
+        cc.api.model.v1.model.User restResponseUser =  new cc.api.model.v1.model.User();
+        restResponseUser.setAge(this.age);
+        restResponseUser.setId(this.id);
+        restResponseUser.setName(this.name);
+        return restResponseUser;
     }
 }
