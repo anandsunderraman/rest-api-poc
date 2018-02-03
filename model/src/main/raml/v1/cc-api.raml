@@ -6,7 +6,7 @@ baseUri: https://cc.rest.api/{version}/
 
 schemas:
   - fibonacci:   !include fibonacci.json
-  - error:       !include error.json
+  - apimessage:  !include apimessage.json
   - posts:       !include posts.json
   - user:        !include user.json
 
@@ -32,7 +32,7 @@ schemas:
       400:
         body:
           application/json:
-            schema: error
+            schema: apimessage
 
 /external/posts:
   get:
@@ -45,7 +45,7 @@ schemas:
       500:
         body:
           application/json:
-            schema: error
+            schema: apimessage
 
 /user:
   post:
@@ -72,7 +72,7 @@ schemas:
         404:
           body:
             application/json:
-              schema: error
+              schema: apimessage
     put:
       description: modifies user specified by id
       body:
@@ -86,6 +86,18 @@ schemas:
         404:
           body:
             application/json:
-              schema: error
+              schema: apimessage
+    delete:
+      description: deletes a user entity
+      responses:
+        200:
+          body:
+            application/json:
+              schema: apimessage
+        404:
+          body:
+            application/json:
+              schema: apimessage
+
 
 

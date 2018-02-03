@@ -2,5 +2,6 @@ CREATE TABLE user (
    id INT IDENTITY NOT NULL,
    name VARCHAR(50) NOT NULL,
    age INT NOT NULL,
+   isremoved TINYINT DEFAULT 0,
    PRIMARY KEY (id)
 );

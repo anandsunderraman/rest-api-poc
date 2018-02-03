@@ -1,13 +1,15 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema",
-  "title": "error",
+  "title": "apimessage",
   "type": "object",
-  "description": "Generic error message",
+  "description": "Generic api message",
   "properties": {
-    "errorType": {
+    "status": {
       "enum": [
         "badrequest",
-        "servererror"
+        "servererror",
+        "notfound",
+        "success"
       ]
     },
     "message": {

@@ -1,6 +1,6 @@
 package org.example.rest;
 
-import cc.api.model.v1.model.Error;
+import cc.api.model.v1.model.Apimessage;
 import cc.api.model.v1.resource.FibonacciNumberResource;
 import org.example.service.FibonacciService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,9 @@ public class Fibonacci implements FibonacciNumberResource {
     public GetFibonacciByNumberResponse getFibonacciByNumber(Integer number) throws Exception {
 
         if (number < 0) {
-            Error error = new Error()
+            Apimessage error = new Apimessage()
                     .withMessage("Cannot return Fibonacci series for negative numbers")
-                    .withErrorType(Error.ErrorType.BADREQUEST);
+                    .withStatus(Apimessage.Status.BADREQUEST);
             return GetFibonacciByNumberResponse.withJsonBadRequest(error);
         }
 

@@ -1,6 +1,6 @@
 package org.example.rest;
 
-import cc.api.model.v1.model.Error;
+import cc.api.model.v1.model.Apimessage;
 import cc.api.model.v1.model.User;
 import cc.api.model.v1.resource.UserResource;
 import org.example.service.UserService;
@@ -23,37 +23,25 @@ public class UserResourceImpl implements UserResource {
     public GetUserByIdResponse getUserById(Integer id) throws Exception {
 
         if (id < 0) {
-            Error error = new Error()
+            Apimessage error = new Apimessage()
                     .withMessage("Id cannot be negative")
-                    .withErrorType(Error.ErrorType.BADREQUEST);
+                    .withStatus(Apimessage.Status.BADREQUEST);
 
             return GetUserByIdResponse.withJsonNotFound(error);
         }
 
         Optional<org.example.domain.User> domainUser = userService.getUserById(new Long(id));
 
-        if (domainUser.isPresent()) {
-            return GetUserByIdResponse.withJsonOK(from(domainUser.get()));
+        //return response only if user is not deleted
+        if (domainUser.isPresent() && !domainUser.get().isDeleted()) {
+            return GetUserByIdResponse.withJsonOK(domainUser.get().convertToRestResponse());
         } else {
             String errorMessage = String.format("Unable to find with user with id: %d", id);
-            Error error = new Error()
+            Apimessage error = new Apimessage()
                     .withMessage(errorMessage)
-                    .withErrorType(Error.ErrorType.BADREQUEST);
+                    .withStatus(Apimessage.Status.NOTFOUND);
             return GetUserByIdResponse.withJsonNotFound(error);
         }
-    }
-
-    /**
-     * Convert domain object to REST response object
-     * @param domainUser
-     * @return
-     */
-    private User from(org.example.domain.User domainUser) {
-        User restResponseUser =  new User();
-        restResponseUser.setAge(domainUser.getAge());
-        restResponseUser.setId(domainUser.getId());
-        restResponseUser.setName(domainUser.getName());
-        return restResponseUser;
     }
 
     @Override
@@ -69,7 +57,43 @@ public class UserResourceImpl implements UserResource {
     }
 
     @Override
-    public PutUserByIdResponse putUserById(Integer id, User entity) throws Exception {
-        return null;
+    public PutUserByIdResponse putUserById(Integer id, User userPayLoad) throws Exception {
+        //convert user to domain object
+        org.example.domain.User domainUser = new org.example.domain.User(userPayLoad);
+        domainUser.setId(new Long(id));
+
+        //update user object
+        Optional<org.example.domain.User> updatedUser = userService.update(domainUser);
+
+        if (updatedUser.isPresent()) {
+            return PutUserByIdResponse.withJsonOK(updatedUser.get().convertToRestResponse());
+        } else {
+            String errorMessage = String.format("User with id: %d does not exist and hence unable to update it", id);
+            Apimessage error = new Apimessage()
+                    .withMessage(errorMessage)
+                    .withStatus(Apimessage.Status.NOTFOUND);
+            return PutUserByIdResponse.withJsonNotFound(error);
+        }
+    }
+
+    @Override
+    public DeleteUserByIdResponse deleteUserById(Integer id) throws Exception {
+        //invoke user service to delete user
+        boolean isUserDeleted = userService.delete(new Long(id));
+
+        if (isUserDeleted) {
+            String successMessage = String.format("Successfully deleted user with id: %d", id);
+            Apimessage success = new Apimessage()
+                    .withMessage(successMessage)
+                    .withStatus(Apimessage.Status.SUCCESS);
+            return DeleteUserByIdResponse.withJsonOK(success);
+        } else {
+            String errorMessage = String.format("Unable to located user with id: %d and hence unable to delete it", id);
+            Apimessage error = new Apimessage()
+                    .withMessage(errorMessage)
+                    .withStatus(Apimessage.Status.NOTFOUND);
+            return DeleteUserByIdResponse.withJsonNotFound(error);
+
+        }
     }
 }

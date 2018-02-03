@@ -16,6 +16,8 @@ public class User {
 
     private Integer age;
 
+    private Boolean isremoved = false;
+
     public Long getId() {
         return id;
     }
@@ -28,6 +30,14 @@ public class User {
         return age;
     }
 
+    public Boolean getIsremoved() {
+        return isremoved;
+    }
+
+    public Boolean isDeleted() {
+        return isremoved;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -38,6 +48,10 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void delete() {
+        this.isremoved = true;
     }
 
     public User() {
@@ -58,7 +72,8 @@ public class User {
 
         if (id != null ? !id.equals(user.id) : user.id != null) return false;
         if (name != null ? !name.equals(user.name) : user.name != null) return false;
-        return age != null ? age.equals(user.age) : user.age == null;
+        if (age != null ? !age.equals(user.age) : user.age != null) return false;
+        return isremoved != null ? isremoved.equals(user.isremoved) : user.isremoved == null;
     }
 
     @Override
@@ -66,6 +81,7 @@ public class User {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (age != null ? age.hashCode() : 0);
+        result = 31 * result + (isremoved != null ? isremoved.hashCode() : 0);
         return result;
     }
 
@@ -75,6 +91,7 @@ public class User {
         sb.append("id=").append(id);
         sb.append(", name='").append(name).append('\'');
         sb.append(", age=").append(age);
+        sb.append(", isremoved=").append(isremoved);
         sb.append('}');
         return sb.toString();
     }

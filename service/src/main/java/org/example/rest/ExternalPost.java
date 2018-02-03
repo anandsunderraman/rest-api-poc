@@ -1,6 +1,6 @@
 package org.example.rest;
 
-import cc.api.model.v1.model.Error;
+import cc.api.model.v1.model.Apimessage;
 import cc.api.model.v1.model.Post;
 import cc.api.model.v1.resource.ExternalPostsResource;
 import org.example.external.service.PostsService;
@@ -27,9 +27,9 @@ public class ExternalPost implements ExternalPostsResource {
         try {
             postList = postsService.getPosts();
         } catch (Exception e) {
-            Error error = new Error()
+            Apimessage error = new Apimessage()
                     .withMessage("Error obtaining response from external posts service")
-                    .withErrorType(Error.ErrorType.SERVERERROR);
+                    .withStatus(Apimessage.Status.SERVERERROR);
             return GetExternalPostsResponse.withJsonInternalServerError(error);
         }
 
