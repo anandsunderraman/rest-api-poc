@@ -53,11 +53,29 @@ schemas:
     description: get list of users
     queryParameters:
       pageSize:
-        description: page size of the result
+        description: page size of the result should be a positive integer defaults to 50
         type: integer
+        required: false
       pageNumber:
-        description: page number of the result set
+        description: page number of the result set should be a non zero integer defaults to 0
         type: integer
+        required: false
+      name:
+        description: query user by name
+        type: string
+        required: false
+      exactMatch:
+        type: boolean
+        description: is true queries user by exact name match else does a like query defaults to false
+        required: false
+      startAge:
+        type: integer
+        description: start of age range to start querying defaults to 0
+        required: false
+      endAge:
+        type: integer
+        description:  end of age range to start querying defaults to max integer value
+        required: false
     responses:
       200:
         body:

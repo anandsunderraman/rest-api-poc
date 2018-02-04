@@ -102,10 +102,13 @@ public class UserResourceImpl implements UserResource {
         }
     }
 
+
     @Override
-    public GetUserResponse getUser(Integer pageSize, Integer pageNumber) throws Exception {
+    public GetUserResponse getUser(Integer pageSize, Integer pageNumber, String name, Boolean exactMatch, Integer startAge, Integer endAge) throws Exception {
 
         UserService.UserQuery userQuery = new UserService.UserQuery();
+
+        //builds a user query object based on parameters
         if (pageSize != null && pageNumber != null) {
 
             if (pageSize <= 0 || pageNumber < 0) {
@@ -118,6 +121,36 @@ public class UserResourceImpl implements UserResource {
 
             userQuery.pageNumber = pageNumber;
             userQuery.pageSize = pageSize;
+        }
+
+        if (name != null) {
+            userQuery.name = name;
+        }
+
+        if (exactMatch != null) {
+            userQuery.exactMatch = exactMatch;
+        }
+
+        if (startAge != null) {
+            if (startAge < 0) {
+                Apimessage error = new Apimessage()
+                        .withMessage(String.format("startAge: %d must be a non negative integer", startAge))
+                        .withStatus(Apimessage.Status.BADREQUEST);
+
+                return GetUserResponse.withJsonBadRequest(error);
+            }
+            userQuery.startAge = startAge;
+        }
+
+        if (endAge != null) {
+            if (endAge < 0 || endAge < userQuery.startAge ) {
+                Apimessage error = new Apimessage()
+                        .withMessage(String.format("end: %d must be a non negative integer and endAge must be greater that startAge: %d", endAge, userQuery.startAge))
+                        .withStatus(Apimessage.Status.BADREQUEST);
+
+                return GetUserResponse.withJsonBadRequest(error);
+            }
+            userQuery.endAge = endAge;
         }
 
         UserService.UserQueryResponse userQueryResponse = userService.queryUsers(userQuery);

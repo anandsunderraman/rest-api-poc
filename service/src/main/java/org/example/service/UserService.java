@@ -73,18 +73,29 @@ public class UserService {
     }
 
     public UserQueryResponse queryUsers(UserQuery userQuery) {
-        Page<User> userPage = userRepository.findAll(userQuery.getPageRequest());
-        return new UserQueryResponse(userPage);
+
+        Page<User> resultPage;
+
+        if (userQuery.name != null) {
+            if (userQuery.exactMatch) {
+                resultPage = userRepository.findByNameAndAgeBetween(userQuery.name, userQuery.startAge, userQuery.endAge, userQuery.getPageRequest());
+            } else {
+                resultPage = userRepository.findByNameContainingAndAgeBetween(userQuery.name, userQuery.startAge, userQuery.endAge, userQuery.getPageRequest());
+            }
+        } else {
+            resultPage = userRepository.findByAgeBetween(userQuery.startAge, userQuery.endAge, userQuery.getPageRequest());
+        }
+        return new UserQueryResponse(resultPage);
     }
 
     public static class UserQuery {
 
         public int pageSize = 50;
         public int pageNumber = 0;
-        int startAge;
-        int endAge;
-        String nameQuery;
-        boolean exactMatch;
+        public int startAge = 0;
+        public int endAge = Integer.MAX_VALUE;
+        public String name = null;
+        public boolean exactMatch = false;
 
         public PageRequest getPageRequest() {
             return new PageRequest(pageNumber, pageSize);
