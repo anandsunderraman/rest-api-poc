@@ -5,10 +5,11 @@ version: v1
 baseUri: https://cc.rest.api/{version}/
 
 schemas:
-  - fibonacci:   !include fibonacci.json
-  - apimessage:  !include apimessage.json
-  - posts:       !include posts.json
-  - user:        !include user.json
+  - fibonacci:       !include fibonacci.json
+  - apimessage:      !include apimessage.json
+  - posts:           !include posts.json
+  - user:            !include user.json
+  - userCollection:  !include userCollection.json
 
 /helloWorld:
   get:
@@ -48,6 +49,20 @@ schemas:
             schema: apimessage
 
 /user:
+  get:
+    description: get list of users
+    queryParameters:
+      pageSize:
+        description: page size of the result
+        type: integer
+      pageNumber:
+        description: page number of the result set
+        type: integer
+    responses:
+      200:
+        body:
+          application/json:
+            schema: userCollection
   post:
     description: creates a new user
     body:

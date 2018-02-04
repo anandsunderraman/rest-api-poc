@@ -2,17 +2,22 @@ package org.example.rest;
 
 import cc.api.model.v1.model.Apimessage;
 import cc.api.model.v1.model.User;
+import cc.api.model.v1.model.UserCollection;
 import cc.api.model.v1.resource.UserResource;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class UserResourceImpl implements UserResource {
 
     private final UserService userService;
+
+
 
     @Autowired
     public UserResourceImpl(UserService userService) {
@@ -96,4 +101,37 @@ public class UserResourceImpl implements UserResource {
 
         }
     }
+
+    @Override
+    public GetUserResponse getUser(Integer pageSize, Integer pageNumber) throws Exception {
+
+        UserService.UserQuery userQuery = new UserService.UserQuery();
+        if (pageSize != null && pageNumber != null) {
+
+            if (pageSize < 0 || pageNumber < 0) {
+                //illegal argument exception
+            }
+
+            userQuery.pageNumber = pageNumber;
+            userQuery.pageSize = pageSize;
+        }
+
+        UserService.UserQueryResponse userQueryResponse = userService.queryUsers(userQuery);
+
+        //converting the domain user object to REST response representation
+        List<User> userResponse = userQueryResponse.getUserList()
+                .stream()
+                .map(org.example.domain.User::convertToRestResponse)
+                .collect(Collectors.toList());
+
+        UserCollection userCollection = new UserCollection()
+                .withPageNumber(userQueryResponse.getPageNumber())
+                .withPageSize(userQueryResponse.getPageSize())
+                .withTotalItems(userQueryResponse.getTotalItems())
+                .withUser(userResponse);
+
+        return GetUserResponse.withJsonOK(userCollection);
+    }
+
+
 }

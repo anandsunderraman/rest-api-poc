@@ -4,8 +4,11 @@ package org.example.service;
 import org.example.domain.User;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -66,6 +69,63 @@ public class UserService {
         } else {
             //else return false
             return false;
+        }
+    }
+
+    public UserQueryResponse queryUsers(UserQuery userQuery) {
+        Page<User> userPage = userRepository.findAll(userQuery.getPageRequest());
+        return new UserQueryResponse(userPage);
+    }
+
+    public static class UserQuery {
+
+        public int pageSize = 50;
+        public int pageNumber = 0;
+        int startAge;
+        int endAge;
+        String nameQuery;
+        boolean exactMatch;
+
+        public PageRequest getPageRequest() {
+            return new PageRequest(pageNumber, pageSize);
+        }
+
+    }
+
+    /**
+     * class used to represent user response
+     * we could have returned the Page<User> object to the consumer
+     * but this ties the consumer of the service to spring Page implementation
+     * used this inner class abstracts the implementation detail from the consumer
+     */
+    public static class UserQueryResponse {
+
+        final long totalItems;
+        final List<User> userList;
+        final int pageSize;
+        final int pageNumber;
+
+        public UserQueryResponse(Page<User> userPage) {
+            totalItems = userPage.getTotalElements();
+            userList = userPage.getContent();
+            pageSize = userPage.getSize();
+            pageNumber = userPage.getNumber();
+        }
+
+        public long getTotalItems() {
+            return totalItems;
+        }
+
+        public List<User> getUserList() {
+            return userList;
+        }
+
+        public int getPageSize() {
+            return pageSize;
+        }
+
+        public int getPageNumber() {
+            return pageNumber;
         }
     }
 }

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "usercollection",
+  "type": "object",
+  "description": "user response collection",
+  "properties": {
+    "pageSize": {
+      "type": "integer"
+    },
+    "pageNumber": {
+      "type": "integer"
+    },
+    "totalItems": {
+      "javaType": "java.lang.Long"
+    },
+    "user": {
+      "type": "array",
+      "items": {
+        "$ref": "user"
+      }
+    }
+  }
+}
