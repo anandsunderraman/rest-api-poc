@@ -108,8 +108,12 @@ public class UserResourceImpl implements UserResource {
         UserService.UserQuery userQuery = new UserService.UserQuery();
         if (pageSize != null && pageNumber != null) {
 
-            if (pageSize < 0 || pageNumber < 0) {
-                //illegal argument exception
+            if (pageSize <= 0 || pageNumber < 0) {
+                Apimessage error = new Apimessage()
+                        .withMessage(String.format("pageSize: %d has to be greater than 0 or pageNumber: %d cannot be negative", pageSize, pageNumber))
+                        .withStatus(Apimessage.Status.BADREQUEST);
+
+                return GetUserResponse.withJsonBadRequest(error);
             }
 
             userQuery.pageNumber = pageNumber;

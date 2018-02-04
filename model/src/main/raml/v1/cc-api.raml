@@ -63,6 +63,10 @@ schemas:
         body:
           application/json:
             schema: userCollection
+      400:
+        body:
+          application/json:
+            schema: apimessage
   post:
     description: creates a new user
     body:
