@@ -17,8 +17,6 @@ public class UserResourceImpl implements UserResource {
 
     private final UserService userService;
 
-
-
     @Autowired
     public UserResourceImpl(UserService userService) {
         this.userService = userService;
@@ -158,6 +156,7 @@ public class UserResourceImpl implements UserResource {
         //converting the domain user object to REST response representation
         List<User> userResponse = userQueryResponse.getUserList()
                 .stream()
+                .filter(user -> !user.getIsremoved())
                 .map(org.example.domain.User::convertToRestResponse)
                 .collect(Collectors.toList());
 
