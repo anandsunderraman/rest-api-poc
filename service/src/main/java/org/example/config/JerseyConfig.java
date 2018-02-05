@@ -3,6 +3,7 @@ package org.example.config;
 import cc.api.model.v1.resource.FibonacciNumberResource;
 import org.example.rest.ExternalPost;
 import org.example.rest.HelloWorld;
+import org.example.rest.TriggerDeadlock;
 import org.example.rest.UserResourceImpl;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.stereotype.Component;
@@ -19,5 +20,6 @@ public class JerseyConfig extends ResourceConfig {
         register(FibonacciNumberResource.class);
         register(ExternalPost.class);
         register(UserResourceImpl.class);
+        register(TriggerDeadlock.class);
     }
 }

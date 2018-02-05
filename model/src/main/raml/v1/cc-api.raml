@@ -5,11 +5,12 @@ version: v1
 baseUri: https://cc.rest.api/{version}/
 
 schemas:
-  - fibonacci:       !include fibonacci.json
-  - apimessage:      !include apimessage.json
-  - posts:           !include posts.json
-  - user:            !include user.json
-  - userCollection:  !include userCollection.json
+  - fibonacci:            !include fibonacci.json
+  - apimessage:           !include apimessage.json
+  - posts:                !include posts.json
+  - user:                 !include user.json
+  - userCollection:       !include userCollection.json
+  - threadNameCollection: !include threadNameCollection.json
 
 /helloWorld:
   get:
@@ -135,6 +136,41 @@ schemas:
           body:
             application/json:
               schema: apimessage
+
+/deadlock:
+  /trigger/{timeout}:
+    uriParameters:
+      timeout:
+        type: integer
+        description: timeout in seconds after which the deadlocked threads will stop executing. timeout should be between 1 and 60
+    get:
+      description: idempotent operation triggering a deadlock between two threads
+      responses:
+        200:
+          body:
+            application/json:
+              schema: apimessage
+        400:
+          body:
+            application/json:
+              schema: apimessage
+        404:
+          body:
+            application/json:
+              schema: apimessage
+  /detect:
+    get:
+      description: returns threads in deadlock
+      responses:
+        200:
+          body:
+            application/json:
+              schema: threadNameCollection
+        404:
+          body:
+            application/json:
+              schema: apimessage
+
 
 
 
