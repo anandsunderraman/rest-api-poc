@@ -5,6 +5,8 @@ import cc.api.model.v1.model.User;
 import cc.api.model.v1.model.UserCollection;
 import cc.api.model.v1.resource.UserResource;
 import org.example.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class UserResourceImpl implements UserResource {
+
+    private static final Logger log = LoggerFactory.getLogger(UserResourceImpl.class);
 
     private final UserService userService;
 
@@ -26,8 +30,10 @@ public class UserResourceImpl implements UserResource {
     public GetUserByIdResponse getUserById(Integer id) throws Exception {
 
         if (id < 0) {
+            String errorMessage = String.format("id: %d cannot be negative", id);
+            log.error(errorMessage);
             Apimessage error = new Apimessage()
-                    .withMessage("Id cannot be negative")
+                    .withMessage(errorMessage)
                     .withStatus(Apimessage.Status.BADREQUEST);
 
             return GetUserByIdResponse.withJsonBadRequest(error);
@@ -40,6 +46,7 @@ public class UserResourceImpl implements UserResource {
             return GetUserByIdResponse.withJsonOK(domainUser.get().convertToRestResponse());
         } else {
             String errorMessage = String.format("Unable to find with user with id: %d", id);
+            log.error(errorMessage);
             Apimessage error = new Apimessage()
                     .withMessage(errorMessage)
                     .withStatus(Apimessage.Status.NOTFOUND);
@@ -72,6 +79,7 @@ public class UserResourceImpl implements UserResource {
             return PutUserByIdResponse.withJsonOK(updatedUser.get().convertToRestResponse());
         } else {
             String errorMessage = String.format("User with id: %d does not exist and hence unable to update it", id);
+            log.error(errorMessage);
             Apimessage error = new Apimessage()
                     .withMessage(errorMessage)
                     .withStatus(Apimessage.Status.NOTFOUND);
@@ -86,12 +94,14 @@ public class UserResourceImpl implements UserResource {
 
         if (isUserDeleted) {
             String successMessage = String.format("Successfully deleted user with id: %d", id);
+            log.info(successMessage);
             Apimessage success = new Apimessage()
                     .withMessage(successMessage)
                     .withStatus(Apimessage.Status.SUCCESS);
             return DeleteUserByIdResponse.withJsonOK(success);
         } else {
             String errorMessage = String.format("Unable to located user with id: %d and hence unable to delete it", id);
+            log.error(errorMessage);
             Apimessage error = new Apimessage()
                     .withMessage(errorMessage)
                     .withStatus(Apimessage.Status.NOTFOUND);
@@ -110,10 +120,11 @@ public class UserResourceImpl implements UserResource {
         if (pageSize != null && pageNumber != null) {
 
             if (pageSize <= 0 || pageNumber < 0) {
+                String errorMessage = String.format("pageSize: %d has to be greater than 0 or pageNumber: %d cannot be negative", pageSize, pageNumber);
+                log.error(errorMessage);
                 Apimessage error = new Apimessage()
-                        .withMessage(String.format("pageSize: %d has to be greater than 0 or pageNumber: %d cannot be negative", pageSize, pageNumber))
+                        .withMessage(errorMessage)
                         .withStatus(Apimessage.Status.BADREQUEST);
-
                 return GetUserResponse.withJsonBadRequest(error);
             }
 
@@ -131,8 +142,10 @@ public class UserResourceImpl implements UserResource {
 
         if (startAge != null) {
             if (startAge < 0) {
+                String errorMessage = String.format("startAge: %d must be a non negative integer", startAge);
+                log.error(errorMessage);
                 Apimessage error = new Apimessage()
-                        .withMessage(String.format("startAge: %d must be a non negative integer", startAge))
+                        .withMessage(errorMessage)
                         .withStatus(Apimessage.Status.BADREQUEST);
 
                 return GetUserResponse.withJsonBadRequest(error);
@@ -142,8 +155,10 @@ public class UserResourceImpl implements UserResource {
 
         if (endAge != null) {
             if (endAge < 0 || endAge < userQuery.startAge ) {
+                String errorMessage = String.format("end: %d must be a non negative integer and endAge must be greater that startAge: %d", endAge, userQuery.startAge);
+                log.error(errorMessage);
                 Apimessage error = new Apimessage()
-                        .withMessage(String.format("end: %d must be a non negative integer and endAge must be greater that startAge: %d", endAge, userQuery.startAge))
+                        .withMessage(errorMessage)
                         .withStatus(Apimessage.Status.BADREQUEST);
 
                 return GetUserResponse.withJsonBadRequest(error);
