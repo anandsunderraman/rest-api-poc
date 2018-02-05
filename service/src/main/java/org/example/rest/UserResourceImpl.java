@@ -30,7 +30,7 @@ public class UserResourceImpl implements UserResource {
                     .withMessage("Id cannot be negative")
                     .withStatus(Apimessage.Status.BADREQUEST);
 
-            return GetUserByIdResponse.withJsonNotFound(error);
+            return GetUserByIdResponse.withJsonBadRequest(error);
         }
 
         Optional<org.example.domain.User> domainUser = userService.getUserById(new Long(id));

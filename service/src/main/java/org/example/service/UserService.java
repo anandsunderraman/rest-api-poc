@@ -88,6 +88,9 @@ public class UserService {
         return new UserQueryResponse(resultPage);
     }
 
+    /**
+     * UserQuery class is created to decouple the REST endpoint from the database implementation
+     */
     public static class UserQuery {
 
         public int pageSize = 50;

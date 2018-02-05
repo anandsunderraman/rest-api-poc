@@ -44,7 +44,7 @@ public class DeadlockService {
         return false;
     }
 
-    private Optional<List<ThreadInfo>> getDeadLockedThreads() {
+    public Optional<List<ThreadInfo>> getDeadLockedThreads() {
         long[] deadLockedThreadIds = mbean.findDeadlockedThreads();
 
         if (deadLockedThreadIds == null) {
